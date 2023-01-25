@@ -1,4 +1,3 @@
-#include "sockpp/tcp_acceptor.h"
 #include "./include/socketEventLoop.h"
 #include <iostream>
 #include <thread>
@@ -44,7 +43,7 @@ int main()
         else
         {
             // Create a thread and transfer the new stream to it.
-            t.addSocketEvent(sock.handle());
+            t.addSocketEvent(sock);
             std::thread thr(run_echo, std::move(sock));
             thr.detach();
         }
