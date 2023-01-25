@@ -7,6 +7,5 @@ https://blog.cloudflare.com/the-problem-with-event-loops/
   - Working threadPool Class
  
 # To be implemented:
-  - Finish kqueue event driven loop for sockets
   - Properly include all external libraries used (sockpp)
   - Implement a parsing feature for load balancer functionality
