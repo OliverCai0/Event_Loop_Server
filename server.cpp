@@ -2,24 +2,44 @@
 #include <iostream>
 #include <thread>
 
-void run_echo(sockpp::tcp_socket sock)
+
+int light_job(sockpp::tcp_socket &sock, std::vector<char*> request)
 {
-    char buf[1024] = {0};
-    ssize_t n;
-
-    while ((n = sock.read(buf, sizeof(buf))) > 0)
-    {
-        std::cout << buf << std::endl;
-        std::cout << "New Line" << std::endl;
-        sock.write_n(buf, n);
-    }
-
-    std::cout << "Connection closed from " << sock.peer_address() << std::endl;
+    sock.write_n(request[0], sizeof(request[0]));
+    return 0;
 }
+
+int heavy_job(sockpp::tcp_socket &sock, std::vector<char*> request)
+{
+    /*
+    Placeholder for heavy io load
+    */
+
+   for(int i; i < 100; i++)
+   {
+        sock.write_n(request[0], sizeof(request[0]));
+   }
+   return 0;
+}
+// void run_echo(sockpp::tcp_socket sock)
+// {
+//     char buf[1024] = {0};
+//     ssize_t n;
+
+//     while ((n = sock.read(buf, sizeof(buf))) > 0)
+//     {
+//         std::cout << buf << std::endl;
+//         std::cout << "New Line" << std::endl;
+//         sock.write_n(buf, n);
+//     }
+
+//     std::cout << "Connection closed from " << sock.peer_address() << std::endl;
+// }
 
 int main()
 {
     kqueueEventLoop t;
+    std::thread thr(&kqueueEventLoop::runLoop, t, std::ref(light_job), std::ref(heavy_job));
     int16_t port = 12345;
     sockpp::tcp_acceptor acc(port);
 
@@ -44,8 +64,7 @@ int main()
         {
             // Create a thread and transfer the new stream to it.
             t.addSocketEvent(sock);
-            std::thread thr(run_echo, std::move(sock));
-            thr.detach();
+            // thr.detach();
         }
     }
 }
